@@ -1,8 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import db from '../database/configdb.js';
-import userRoutes from '../routes/user.routes.js';
-import User from '../models/user.js';
+import db from './database/configdb.js';
+import userRoutes from './routes/user.routes.js';
+import User from './models/user.js';
 
 dotenv.config();
 
