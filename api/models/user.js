@@ -11,6 +11,11 @@ const configSchema = new mongoose.Schema({
         required: true,
         select: false, // Do not include password in queries by default
     },
+    email: {
+        type: String,
+        required: true,
+        unique: true, // Ensure email is unique
+    },
 });
 
 const User= mongoose.model("User", configSchema);

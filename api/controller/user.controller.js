@@ -1,24 +1,27 @@
 import bcrypt from 'bcrypt';
 import User from '../models/user.js';
 import jwt from 'jsonwebtoken';
+import userService from '../services/user.service.js';
 
 
 const register = async (req, res) => {
         console.log("Registering user", req.body);
 
-        if( !req.body || !req.body.username || !req.body.password) {
-            return res.status(400).json({ message: 'Username and password are required' });
+        if( !req.body || !req.body.username || !req.body.password || !req.body.email) {
+            return res.status(400).json({ message: 'Username, email and password are required' });
         }
 
-        const { username, password } = req.body;
+        const { username, email, password } = req.body;
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         
         try{
                 const savedUser = await User.create({
                         username,
+                        email,
                         password: hashedPassword
                 });
+                //const newUser = await userService.registerUser({ username, email, password });
                 console.log("Saved user", savedUser);
                 res.status(200).json({ message: 'User registered successfully'});
         } catch (error) {
@@ -31,11 +34,11 @@ const register = async (req, res) => {
 const login = async (req, res) => {
         console.log("Logging in user", req.body);
 
-        if( !req.body || !req.body.username || !req.body.password) {
-            return res.status(400).json({ message: 'Username and password are required' });
+        if( !req.body || !req.body.username  || !req.body.email || !req.body.password) {
+            return res.status(400).json({ message: 'Username, email and password are required' });
         }
 
-        const { username, password } = req.body;
+        const { username, email, password } = req.body;
 
         try{
                 const user = await User.findOne({ username }).select('+password');
@@ -43,7 +46,10 @@ const login = async (req, res) => {
                         console.error("User not found", username);
                         return res.status(404).json({ message: 'User not found' });
                 }
-
+                if (user.email !== email) {
+                        console.error("Email does not match", email);
+                        return res.status(401).json({ message: 'Invalid credentials' });
+                }
                 const isMatch = await bcrypt.compare(password, user.password);
                 if (!isMatch) {
                         return res.status(401).json({ message: 'Invalid credentials' });
