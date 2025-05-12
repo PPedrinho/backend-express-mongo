@@ -2,7 +2,7 @@ curl --request POST \
   --url 'http://localhost:3000/users/register' \
   --header 'Content-Type: application/json' \
   --data '{
-    "username": "aNovoUsuario1",
-    "email": "novouser@gmail.com",
-    "password": "anovasenha1"
+    "username": "UsuarioTeste22",
+    "email": "usuarioteste@gmail.com",
+    "password": "22txste123"
     }'
